@@ -71,8 +71,16 @@ public class Equipe {
      * @return Total de vitórias da equipe.
      */
     private int totalVitorias(){
-        //TODO;
-        return 0;
+        int tVitorias = 0; 
+
+        if(partidas != null && quantPartidas>0){
+        for (PartidaDeVolei p: partidas) {
+            if (p.vencedorDoJogo().equals(nome)){
+                tVitorias += 1; 
+            }
+        }
+    }
+        return tVitorias;
     }
 
     /**
@@ -102,9 +110,39 @@ public class Equipe {
      * @return Aproveitamento em sets da equipe (vencidos/perdidos), podendo ser Double.MAX_VALUE em caso de 0 sets perdidos.
      */
     public double aproveitamentoSets(){
-        //TODO 
-        return 0;
+        double aproveitamento = 0;
+
+        int setsGanhos = totalDeSetsGanhos(nome);
+        int setsPerdidos = totalDeSetsPerdidos(nome);
+        if (setsPerdidos != 0) {
+            aproveitamento = ((double) setsGanhos/setsPerdidos);
+        } else if (setsPerdidos != 0 && setsGanhos > setsPerdidos){
+            aproveitamento = 0;
+        } 
+        else if (setsPerdidos == 0 && setsGanhos > 0){
+            aproveitamento = Double.MAX_VALUE;
+        }
+
+        return aproveitamento;
     }
+
+    public int totalDeSetsGanhos(String nome) {
+        int sets = 0;
+        for (PartidaDeVolei p: partidas) {
+            sets += p.setsVencidosEquipe(nome);
+    
+        }
+        return sets;
+    }
+
+    public int totalDeSetsPerdidos(String nome) {
+        int tsets = 0;
+        for (PartidaDeVolei p: partidas) {
+            tsets += p.setsDisputados();
+        }
+        return (tsets - totalDeSetsGanhos(nome));
+    }
+
 
     /**
      * Cria um resumo da campanha da equipe. Uma única linha contendo seu nome, total de vitórias, total de derrotas,
